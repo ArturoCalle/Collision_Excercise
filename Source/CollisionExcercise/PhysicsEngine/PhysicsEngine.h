@@ -27,6 +27,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void CheckCollisions(float DeltaTime);
+
 	void EvaluateCollisions(class ASphereShape* Sphere,  ASphereShape* Sphere2, float DeltaTime);
 	void EvaluateCollisions(ASphereShape* Sphere, class ALineShape* Line, float DeltaTime);
+	void EvaluateCollisions(ASphereShape* Sphere, class ASquareShape* Square, float DeltaTime);
 };

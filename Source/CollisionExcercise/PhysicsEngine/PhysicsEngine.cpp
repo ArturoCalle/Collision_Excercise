@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Shapes/SphereShape.h"
 #include "Shapes/LineShape.h"
+#include "Shapes/SquareShape.h"
 #include "Shapes/BasicShape.h"
 #include "PhysicsLibrary.h"
 #include "DrawDebugHelpers.h"
@@ -52,6 +53,20 @@ void APhysicsEngine::CheckCollisions(float DeltaTime)
 			AActor* Object2 = SceneObjects[j];
 			if (Object1 != Object2)
 			{	
+				if (ALineShape* Line = Cast<ALineShape>(Object1))
+				{
+					if (ASphereShape* Sphere = Cast<ASphereShape>(Object2))
+					{
+						EvaluateCollisions(Sphere, Line, DeltaTime);
+					}
+				}
+				if (ASquareShape* Square = Cast<ASquareShape>(Object1))
+				{
+					if (ASphereShape* Sphere = Cast<ASphereShape>(Object2))
+					{
+						EvaluateCollisions(Sphere, Square, DeltaTime);
+					}
+				}
 				if (ASphereShape* Sphere = Cast<ASphereShape>(Object1))
 				{
 					if (ASphereShape* Sphere2 = Cast<ASphereShape>(Object2))
@@ -62,14 +77,12 @@ void APhysicsEngine::CheckCollisions(float DeltaTime)
 					{
 						EvaluateCollisions(Sphere, Line, DeltaTime);			
 					}
-				}
-				if (ALineShape* Line = Cast<ALineShape>(Object1))
-				{
-					if(ASphereShape* Sphere = Cast<ASphereShape>(Object2))
+					else if (ASquareShape* Square = Cast<ASquareShape>(Object2))
 					{
-						EvaluateCollisions(Sphere, Line, DeltaTime);
+						EvaluateCollisions(Sphere, Square, DeltaTime);
 					}
 				}
+				
 			}
 
 		}
@@ -112,4 +125,17 @@ void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, ALineShape* Line, 
 		Sphere->MoveSphere(MovementAmount);
 	}
 	
+}
+void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, class ASquareShape* Square, float DeltaTime)
+{
+
+	FVector ContactPoint;
+	float MovementAmount = UPhysicsLibrary::SweepSquareTest(Sphere, Square, &ContactPoint, DeltaTime, GetWorld());
+	if (MovementAmount < 1.0) 
+	{
+		Sphere->bIsColliding = true;
+
+		UPhysicsLibrary::SolveCollision(Sphere, Square);
+	}
+	Sphere->MoveSphere(MovementAmount);
 }
