@@ -130,12 +130,15 @@ void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, class ASquareShape
 {
 
 	FVector ContactPoint;
-	float MovementAmount = UPhysicsLibrary::SweepSquareTest(Sphere, Square, &ContactPoint, DeltaTime, GetWorld());
-	if (MovementAmount < 1.0) 
+	bool* EdgeCollision = new bool(false);
+	float MovementAmount = UPhysicsLibrary::SweepSquareTest(Sphere, Square, &ContactPoint, DeltaTime);
+	//
+	if (UPhysicsLibrary::CalculateCollision(Sphere->GetActorLocation(), Sphere->Radius, Square))
 	{
 		Sphere->bIsColliding = true;
 
-		UPhysicsLibrary::SolveCollision(Sphere, Square);
+		UPhysicsLibrary::SolveCollision(Sphere, Square, ContactPoint );
 	}
-	Sphere->MoveSphere(MovementAmount);
+	Sphere->MoveSphere(1.0);
+	//Sphere->MoveSphere(MovementAmount);
 }

@@ -42,6 +42,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	FVector GetProyectionSquare(FVector Other);
-	bool CollidingWithEdge(FVector SpherePosition, float Radius);
+	FVector CollidingWithEdge(FVector SpherePosition, float Radius);
 	
 };
