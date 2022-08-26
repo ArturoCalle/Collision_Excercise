@@ -80,8 +80,8 @@ FVector ASquareShape::GetProyectionSquare(FVector Other)
 }
 FVector ASquareShape::CollidingWithEdge(FVector SpherePosition, float Radius)
 {
-	float DistanceToEdge = (TopLeftCorner - SpherePosition).Size();
 	
+	float DistanceToEdge = (TopLeftCorner - SpherePosition).Size();
 	if (DistanceToEdge <= Radius)
 		 return TopLeftCorner;
 

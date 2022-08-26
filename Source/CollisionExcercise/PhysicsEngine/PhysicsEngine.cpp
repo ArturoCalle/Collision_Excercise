@@ -112,7 +112,7 @@ void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, ASphereShape* Sphe
 void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, ALineShape* Line, float DeltaTime)
 {
 	FVector ContactPoint;
-	float MovementAmount = UPhysicsLibrary::SweepLineTest(Sphere,Line, &ContactPoint,DeltaTime,GetWorld());
+	float MovementAmount = UPhysicsLibrary::SweepLineTest(Sphere,Line, &ContactPoint,DeltaTime);
 	if (MovementAmount < 1.0)
 	{
 		Sphere->bIsColliding = true;
@@ -130,15 +130,22 @@ void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, class ASquareShape
 {
 
 	FVector ContactPoint;
-	bool* EdgeCollision = new bool(false);
-	float MovementAmount = UPhysicsLibrary::SweepSquareTest(Sphere, Square, &ContactPoint, DeltaTime);
+	float MovementAmount = UPhysicsLibrary::SweepSquareTest(Sphere, Square, &ContactPoint, DeltaTime, GetWorld());
 	//
-	if (UPhysicsLibrary::CalculateCollision(Sphere->GetActorLocation(), Sphere->Radius, Square))
+	if (MovementAmount < 1.0)
 	{
 		Sphere->bIsColliding = true;
+		FVector EdgeCollision = Square->CollidingWithEdge(Sphere->GetActorLocation(), Sphere->Radius);
+		if (EdgeCollision != Sphere->GetActorLocation())
+		{
+			UPhysicsLibrary::SolveCollisionSquareEdge(Sphere, Square, ContactPoint);
+		}
+		else
+		{
+			UPhysicsLibrary::SolveCollision(Sphere, Square, ContactPoint );
+		}
 
-		UPhysicsLibrary::SolveCollision(Sphere, Square, ContactPoint );
 	}
-	Sphere->MoveSphere(1.0);
-	//Sphere->MoveSphere(MovementAmount);
+	//Sphere->MoveSphere(1.0);
+	Sphere->MoveSphere(MovementAmount);
 }

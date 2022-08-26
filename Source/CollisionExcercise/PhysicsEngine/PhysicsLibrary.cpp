@@ -158,8 +158,22 @@ void UPhysicsLibrary::SolveCollision(ASphereShape* Sphere, ALineShape* Line)
 }
 void UPhysicsLibrary::SolveCollision(ASphereShape* Sphere, ASquareShape* Square, FVector ContactPoint)
 {
+	if ((Sphere->GetActorLocation().Y > Square->GetActorLocation().Y - Square->VerticalSize) && (Sphere->GetActorLocation().Y < Square->GetActorLocation().Y + Square->VerticalSize))
+	{
+		//On horizontal range
+		Sphere->Velocity.X = -Sphere->Velocity.X;
+		
+	}
+	else if ((Sphere->GetActorLocation().X > Square->GetActorLocation().X - Square->HorizontalSize) && (Sphere->GetActorLocation().X < Square->GetActorLocation().X + Square->HorizontalSize))
+	{
+		//On vertical range
+		Sphere->Velocity.Y = -Sphere->Velocity.Y;
+	}
+}
+void UPhysicsLibrary::SolveCollisionSquareEdge(ASphereShape* Sphere, ASquareShape* Square, FVector ContactPoint)
+{
 	FVector CollisionWithEdge = Square->CollidingWithEdge(Sphere->GetActorLocation(), Sphere->Radius);
-	if(Sphere->GetActorLocation() != CollisionWithEdge)
+	if (Sphere->GetActorLocation() != CollisionWithEdge)
 	{
 		//Calculation of collision with edge from: https://stackoverflow.com/questions/49747121/sphere-to-block-corner-collision-detection-js
 
@@ -174,17 +188,6 @@ void UPhysicsLibrary::SolveCollision(ASphereShape* Sphere, ASquareShape* Square,
 		Sphere->Velocity.X = -Sphere->Velocity.X + Tangent.X * DotSphereTangent;
 		Sphere->Velocity.Y = -Sphere->Velocity.Y + Tangent.Y * DotSphereTangent;
 
-	}
-	else if ((Sphere->GetActorLocation().Y > Square->GetActorLocation().Y - Square->VerticalSize) && (Sphere->GetActorLocation().Y < Square->GetActorLocation().Y + Square->VerticalSize))
-	{
-		//On horizontal range
-		Sphere->Velocity.X = -Sphere->Velocity.X;
-		
-	}
-	else if ((Sphere->GetActorLocation().X > Square->GetActorLocation().X - Square->HorizontalSize) && (Sphere->GetActorLocation().X < Square->GetActorLocation().X + Square->HorizontalSize))
-	{
-		//On vertical range
-		Sphere->Velocity.Y = -Sphere->Velocity.Y;
 	}
 }
 
@@ -237,7 +240,7 @@ float UPhysicsLibrary::SweepSphereTest(ASphereShape* DynamicSphere, ASphereShape
 	return 1.0;
 }
 
-float UPhysicsLibrary::SweepLineTest(ASphereShape* Sphere, ALineShape* Line, FVector* ContactPoint, float DesiredDelta, UWorld* WorldContext)
+float UPhysicsLibrary::SweepLineTest(ASphereShape* Sphere, ALineShape* Line, FVector* ContactPoint, float DesiredDelta)
 {
 	FVector ProyectionSphereOnLine = Line->GetProyectionOverLine(Sphere->GetActorLocation());
 
@@ -261,9 +264,39 @@ float UPhysicsLibrary::SweepLineTest(ASphereShape* Sphere, ALineShape* Line, FVe
 	return 1.0;
 }
 
-float UPhysicsLibrary::SweepSquareTest(ASphereShape* Sphere, ASquareShape* Square, FVector* ContactPoint, float DesiredDelta)
+float UPhysicsLibrary::SweepSquareTest(ASphereShape* Sphere, ASquareShape* Square, FVector* ContactPoint, float DesiredDelta, UWorld* WorldContext)
 {
+	FVector SphereProyectedPosition = Sphere->GetActorLocation() + (DesiredDelta * Sphere->Velocity);
+	if (!Sphere->Velocity.SizeSquared() == 0)
+	{
+		if (CalculateCollision(SphereProyectedPosition, Sphere->Radius, Square))
+		{
+			float DistanceSphereToSquare;
+			float ExpectedMovement = (DesiredDelta * Sphere->Velocity).Size() + Sphere->Radius;
+			FVector EdgeCollision = Square->CollidingWithEdge(SphereProyectedPosition, Sphere->Radius);
+			if (SphereProyectedPosition != EdgeCollision)
+			{
+				DistanceSphereToSquare = (EdgeCollision - Sphere->GetActorLocation()).Size();
+			}
+			else
+			{
+				FVector ProyectionSphereOnSquare = Square->GetProyectionSquare(Sphere->GetActorLocation());
+				DistanceSphereToSquare = (ProyectionSphereOnSquare - Sphere->GetActorLocation()).Size();
+			}
 
+			if (ExpectedMovement < DistanceSphereToSquare)
+			{
+				*ContactPoint = Sphere->GetActorLocation();
+				return 1.0;
+			}
+			float OffsetAmount = ExpectedMovement - DistanceSphereToSquare;
+			float AmountOfMovement = OffsetAmount / ExpectedMovement;
+			return AmountOfMovement;
+		}
+	}
+	*ContactPoint = Sphere->GetActorLocation();
+	return 1.0;
+	/*
 	FVector ProyectionSphereOnSquare = Square->GetProyectionSquare(Sphere->GetActorLocation());
 
 	float ExpectedMovement = (DesiredDelta * Sphere->Velocity).Size() + Sphere->Radius;
@@ -275,22 +308,22 @@ float UPhysicsLibrary::SweepSquareTest(ASphereShape* Sphere, ASquareShape* Squar
 		return 1.0;
 	}
 
-	FVector SphereProyectedPosition = Sphere->GetActorLocation() + (DesiredDelta * Sphere->Velocity);
-	FVector EdgeCollision = Square->CollidingWithEdge(SphereProyectedPosition, Sphere->Radius);
-	if (SphereProyectedPosition != EdgeCollision)
+
+	
+	if(CalculateCollision(SphereProyectedPosition, Sphere->Radius, Square))
 	{
-		DistanceSphereToSquare = (EdgeCollision - Sphere->GetActorLocation()).Size();
+		FVector EdgeCollision = Square->CollidingWithEdge(SphereProyectedPosition, Sphere->Radius);
+		UE_LOG(LogTemp, Warning, TEXT("Colliding "));
+		if (SphereProyectedPosition != EdgeCollision)
+		{
+			DrawDebugSphere(WorldContext, SphereProyectedPosition,50.0,20,FColor::White, 1.0,2.0);
+			DistanceSphereToSquare = (EdgeCollision - Sphere->GetActorLocation()).Size();
+		}
 		float OffsetAmount = ExpectedMovement - DistanceSphereToSquare;
 		float AmountOfMovement = OffsetAmount / ExpectedMovement;
-		*ContactPoint = EdgeCollision;
 		return AmountOfMovement;
 	}
-	else if(CalculateCollision(SphereProyectedPosition, Sphere->Radius, Square))
-	{
-		float OffsetAmount = ExpectedMovement - DistanceSphereToSquare;
-		float AmountOfMovement = OffsetAmount / ExpectedMovement;
-		return AmountOfMovement;
-	}
-	return 1.0;
+	*/
+
 
 }
