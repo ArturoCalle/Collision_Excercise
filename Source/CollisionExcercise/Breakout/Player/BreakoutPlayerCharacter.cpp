@@ -20,7 +20,7 @@ void ABreakoutPlayerCharacter::BeginPlay()
 
 	Paddle = GetWorld()->SpawnActor<ASquareShape>(SquareShapeBP,GetActorLocation(), GetActorRotation());
 	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, EAttachmentRule::SnapToTarget, false);
-	Paddle->AttachToActor(this, AttachmentRules);
+	//Paddle->AttachToActor(this, AttachmentRules);
 	Paddle->SetActorScale3D(FVector(1.0f, 5.0f, 1.0f));
 	
 }
@@ -37,6 +37,6 @@ void ABreakoutPlayerCharacter::MoveRight(float Value)
 	if (Value != 0.0)
 	{
 		const FVector Direction = FVector::RightVector;
-		SetActorLocation((Direction * (MovementSpeed * FApp::GetDeltaTime() * Value))+GetActorLocation());
+		Paddle->SetActorLocation((Direction * (MovementSpeed * FApp::GetDeltaTime() * Value))+ Paddle->GetActorLocation());
 	}
 }
