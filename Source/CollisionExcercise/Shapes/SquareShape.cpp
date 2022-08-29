@@ -28,10 +28,6 @@ void ASquareShape::BeginPlay()
 	BottomLeftCorner.Y -= VerticalSize;
 	BottomLeftCorner.X += HorizontalSize;
 
-	DrawDebugSphere(GetWorld(), TopLeftCorner, 10.0, 20, FColor::Black, false, 2.0, 2.0);
-	DrawDebugSphere(GetWorld(), TopRightCorner, 10.0, 20, FColor::White, false, 2.0, 2.0);
-	DrawDebugSphere(GetWorld(), BottomLeftCorner, 10.0, 20, FColor::Red, false, 2.0, 2.0);
-	DrawDebugSphere(GetWorld(), BottomRightCorner, 10.0, 20, FColor::Blue, false, 2.0, 2.0);
 }
 
 void ASquareShape::Tick(float DeltaTime)

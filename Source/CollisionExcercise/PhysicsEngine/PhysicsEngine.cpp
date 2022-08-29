@@ -53,34 +53,46 @@ void APhysicsEngine::CheckCollisions(float DeltaTime)
 			AActor* Object2 = SceneObjects[j];
 			if (Object1 != Object2)
 			{	
-				if (ALineShape* Line = Cast<ALineShape>(Object1))
+				ALineShape* Line;
+				ASquareShape* Square;
+				ASphereShape* Sphere;
+
+				Line = Cast<ALineShape>(Object1);
+				Square = Cast<ASquareShape>(Object1);
+				Sphere = Cast<ASphereShape>(Object1);
+				if (Line)
 				{
-					if (ASphereShape* Sphere = Cast<ASphereShape>(Object2))
+					Sphere = Cast<ASphereShape>(Object2);
+					if (Sphere)
 					{
 						EvaluateCollisions(Sphere, Line, DeltaTime);
 					}
 				}
-				if (ASquareShape* Square = Cast<ASquareShape>(Object1))
+				else if (Square)
 				{
-					if (ASphereShape* Sphere = Cast<ASphereShape>(Object2))
+					Sphere = Cast<ASphereShape>(Object2);
+					if(Sphere)
 					{
 						EvaluateCollisions(Sphere, Square, DeltaTime);
 					}
 				}
-				if (ASphereShape* Sphere = Cast<ASphereShape>(Object1))
+				else if (Sphere)
 				{
-					if (ASphereShape* Sphere2 = Cast<ASphereShape>(Object2))
-					{
-						EvaluateCollisions(Sphere, Sphere2, DeltaTime);							
-					}
-					else if (ALineShape* Line = Cast<ALineShape>(Object2))
-					{
-						EvaluateCollisions(Sphere, Line, DeltaTime);			
-					}
-					else if (ASquareShape* Square = Cast<ASquareShape>(Object2))
+					Square = Cast<ASquareShape>(Object2);
+					Line = Cast<ALineShape>(Object2);
+					if (Square)
 					{
 						EvaluateCollisions(Sphere, Square, DeltaTime);
 					}
+					else if (Line)
+					{
+						EvaluateCollisions(Sphere, Line, DeltaTime);			
+					}
+					else if(ASphereShape * Sphere2 = Cast<ASphereShape>(Object2))
+					{
+						EvaluateCollisions(Sphere, Sphere2, DeltaTime);
+					}
+					
 				}
 				
 			}
@@ -132,8 +144,10 @@ void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, class ASquareShape
 	FVector ContactPoint;
 	float MovementAmount = UPhysicsLibrary::SweepSquareTest(Sphere, Square, &ContactPoint, DeltaTime, GetWorld());
 	//
+	//UPhysicsLibrary::CalculateCollision(Sphere->GetActorLocation(), Sphere->Radius, Square)
 	if (MovementAmount < 1.0)
 	{
+
 		Sphere->bIsColliding = true;
 		FVector EdgeCollision = Square->CollidingWithEdge(Sphere->GetActorLocation(), Sphere->Radius);
 		if (EdgeCollision != Sphere->GetActorLocation())

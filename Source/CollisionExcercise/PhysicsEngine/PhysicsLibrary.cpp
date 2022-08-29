@@ -70,6 +70,22 @@ bool UPhysicsLibrary::CalculateCollision(FVector SpherePosition, float SphereRad
 }
 bool UPhysicsLibrary::CalculateCollision(FVector SpherePosition, float SphereRadius, class ASquareShape* Square)
 {	
+	FVector CircleDistance = FVector((float)FMath::Abs(SpherePosition.X - Square->GetActorLocation().X),
+								  	 (float)FMath::Abs(SpherePosition.Y - Square->GetActorLocation().Y),
+								     0.0f);
+	if(CircleDistance.X > (Square->HorizontalSize / 2 + SphereRadius))
+		return false;
+	if(CircleDistance.Y > (Square->VerticalSize / 2 + SphereRadius))
+		return false;
+	if(CircleDistance.X <= (Square->HorizontalSize / 2 ))
+		return false;
+	if (CircleDistance.Y <= (Square->VerticalSize / 2))
+		return false;
+
+	float CornerDistSq = ((CircleDistance.X - Square->HorizontalSize / 2) * (CircleDistance.X - Square->HorizontalSize / 2)) + ((CircleDistance.Y - Square->VerticalSize / 2) * (CircleDistance.Y - Square->VerticalSize / 2));
+
+	return (CornerDistSq <= (SphereRadius * SphereRadius));
+
 	FVector EdgeCollision = Square->CollidingWithEdge(SpherePosition, SphereRadius);
 	if (EdgeCollision != SpherePosition)
 	{
@@ -296,34 +312,5 @@ float UPhysicsLibrary::SweepSquareTest(ASphereShape* Sphere, ASquareShape* Squar
 	}
 	*ContactPoint = Sphere->GetActorLocation();
 	return 1.0;
-	/*
-	FVector ProyectionSphereOnSquare = Square->GetProyectionSquare(Sphere->GetActorLocation());
-
-	float ExpectedMovement = (DesiredDelta * Sphere->Velocity).Size() + Sphere->Radius;
-	float DistanceSphereToSquare = (ProyectionSphereOnSquare - Sphere->GetActorLocation()).Size();
-
-	if ((Sphere->Velocity.SizeSquared() == 0) || (ExpectedMovement < DistanceSphereToSquare))
-	{
-		*ContactPoint = Sphere->GetActorLocation();
-		return 1.0;
-	}
-
-
 	
-	if(CalculateCollision(SphereProyectedPosition, Sphere->Radius, Square))
-	{
-		FVector EdgeCollision = Square->CollidingWithEdge(SphereProyectedPosition, Sphere->Radius);
-		UE_LOG(LogTemp, Warning, TEXT("Colliding "));
-		if (SphereProyectedPosition != EdgeCollision)
-		{
-			DrawDebugSphere(WorldContext, SphereProyectedPosition,50.0,20,FColor::White, 1.0,2.0);
-			DistanceSphereToSquare = (EdgeCollision - Sphere->GetActorLocation()).Size();
-		}
-		float OffsetAmount = ExpectedMovement - DistanceSphereToSquare;
-		float AmountOfMovement = OffsetAmount / ExpectedMovement;
-		return AmountOfMovement;
-	}
-	*/
-
-
 }
