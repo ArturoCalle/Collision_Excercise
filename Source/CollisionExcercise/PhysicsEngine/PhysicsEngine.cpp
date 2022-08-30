@@ -16,6 +16,8 @@ APhysicsEngine::APhysicsEngine()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	ShouldDebug = false;
+
 }
 
 // Called when the game starts or when spawned
@@ -75,6 +77,8 @@ void APhysicsEngine::CheckCollisions(float DeltaTime)
 					{
 						EvaluateCollisions(Sphere, Square, DeltaTime);
 					}
+					Square->MoveSquare(1.0);	
+					
 				}
 				else if (Sphere)
 				{
@@ -83,6 +87,7 @@ void APhysicsEngine::CheckCollisions(float DeltaTime)
 					if (Square)
 					{
 						EvaluateCollisions(Sphere, Square, DeltaTime);
+						Square->MoveSquare(1.0);
 					}
 					else if (Line)
 					{
@@ -117,8 +122,9 @@ void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, ASphereShape* Sphe
 	Sphere2->MoveSphere(MovementAmount);
 	if ((MovementAmount < 1.0f))
 	{	
-		UE_LOG(LogTemp, Warning, TEXT("Move Amount: %f"), MovementAmount);
 		UPhysicsLibrary::SolveCollision(Sphere, Sphere2);
+		Sphere->OnOverlapBegin(Sphere2);
+		Sphere2->OnOverlapBegin(Sphere);
 	}
 }
 void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, ALineShape* Line, float DeltaTime)
@@ -127,10 +133,9 @@ void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, ALineShape* Line, 
 	float MovementAmount = UPhysicsLibrary::SweepLineTest(Sphere,Line, &ContactPoint,DeltaTime);
 	if (MovementAmount < 1.0)
 	{
-		Sphere->bIsColliding = true;
-
 		UPhysicsLibrary::SolveCollision(Sphere, Line);
 		Sphere->MoveSphere(MovementAmount);
+		Sphere->OnOverlapBegin(Line);
 	}
 	else
 	{
@@ -143,25 +148,51 @@ void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, class ASquareShape
 
 	FVector ContactPoint;
 	float MovementAmount = UPhysicsLibrary::SweepSquareTest(Sphere, Square, &ContactPoint, DeltaTime, GetWorld());
-	//MovementAmount < 1.0
-	//UPhysicsLibrary::CalculateCollision(Sphere->GetActorLocation(), Sphere->Radius, Square)
-	//UE_LOG(LogTemp, Warning, TEXT("Amount of movement"));
-	//DrawDebugLine(GetWorld(), Sphere->GetActorLocation(), Square->GetActorLocation(), FColor::White, false, DeltaTime * 2, 2.0);
+	
+	if (ShouldDebug)
+	{
+		PrintDebug(Sphere, Square);
+	}
 	if (MovementAmount < 1.0)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Square Location: %s"), *Square->GetActorLocation().ToString());
+		
 		Sphere->bIsColliding = true;
 		FVector EdgeCollision = Square->CollidingWithEdge(Sphere->GetActorLocation(), Sphere->Radius);
 		if (EdgeCollision != Sphere->GetActorLocation())
 		{
 			UPhysicsLibrary::SolveCollisionSquareEdge(Sphere, Square, ContactPoint);
+			Sphere->OnOverlapBegin(Square);
+			Square->OnOverlapBegin(Square);
 		}
 		else
 		{
 			UPhysicsLibrary::SolveCollision(Sphere, Square, ContactPoint );
+			Sphere->OnOverlapBegin(Square);
+			Square->OnOverlapBegin(Square);
 		}
 
 	}
-	//Sphere->MoveSphere(1.0);
 	Sphere->MoveSphere(MovementAmount);
+}
+
+void APhysicsEngine::PrintDebug(ASphereShape* Sphere, ASquareShape* Square)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Square Location: %s"), *Square->GetActorLocation().ToString());
+	//DrawDebugSphere(GetWorld(), Sphere->GetActorLocation(),50.0f, 20, FColor::White, false, DeltaTime * 2, 2.0);
+	//MovementAmount < 1.0
+	//UPhysicsLibrary::CalculateCollision(Sphere->GetActorLocation(), Sphere->Radius, Square)
+	//UE_LOG(LogTemp, Warning, TEXT("Amount of movement"));
+	//DrawDebugLine(GetWorld(), Sphere->GetActorLocation(), Square->GetActorLocation(), FColor::White, false, DeltaTime * 2, 2.0);
+	if (UPhysicsLibrary::CalculateCollision(Sphere->GetActorLocation(), Sphere->Radius, Square))
+	{
+		DrawDebugSphere(GetWorld(), Sphere->GetActorLocation(), 50.0f, 20, FColor::Red, false, 1.0, 1.0);
+		DrawDebugBox(GetWorld(), Square->GetActorLocation(), FVector(Square->HorizontalSize, Square->VerticalSize, 10.0), FColor::Red, false, 1.0, 1.0);
+	}
+	
+	else
+	{
+		DrawDebugSphere(GetWorld(), Sphere->GetActorLocation(),50.0f, 20, FColor::White, false, 0.1, 2.0);
+		DrawDebugBox(GetWorld(),Square->GetActorLocation(),FVector(Square->HorizontalSize, Square->VerticalSize, 10.0),FColor::White, false, 0.5,2.0);
+	}
+	
 }

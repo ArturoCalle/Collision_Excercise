@@ -30,8 +30,6 @@ void ASphereShape::BeginPlay()
 void ASphereShape::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	//MoveSphere(1.0f);
 	
 	ChangeMaterial();
 
@@ -59,4 +57,8 @@ void ASphereShape::MoveSphere(float AmountOfMovement)
 {
 	float DeltaTime = FApp::GetDeltaTime();
 	SetActorLocation(GetActorLocation() + (Velocity * DeltaTime * AmountOfMovement));
+}
+void ASphereShape::OnOverlapBegin(AActor* Other)
+{
+	Super::OnOverlapBegin(Other);
 }

@@ -39,4 +39,5 @@ public:
 	void ChangeMaterial();
 	void MoveSphere(float AmountOfMovement);
 
+	virtual void OnOverlapBegin(AActor* Other) override;
 };

@@ -33,6 +33,7 @@ void ABasicShape::BeginPlay()
 void ABasicShape::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	OtherActor = nullptr;
 
 }
 void ABasicShape::SetColliding(bool bIsColliding)
@@ -46,5 +47,9 @@ void ABasicShape::SetColliding(bool bIsColliding)
 	{
 		Mesh->SetMaterial(0, NoCollisionMaterial);
 	}
+}
+void ABasicShape::OnOverlapBegin(AActor* Other)
+{
+
 }
 

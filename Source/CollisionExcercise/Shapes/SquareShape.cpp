@@ -8,25 +8,8 @@
 void ASquareShape::BeginPlay()
 {
 	Super::BeginPlay();
-	VerticalSize = GetActorScale().Y * 50;
-	HorizontalSize = GetActorScale().X *50;
-
-	// get positions of all corners
-	TopLeftCorner = GetActorLocation();
-	TopLeftCorner.Y += VerticalSize;
-	TopLeftCorner.X += HorizontalSize;
-
-	TopRightCorner = GetActorLocation();
-	TopRightCorner.Y += VerticalSize;
-	TopRightCorner.X -= HorizontalSize;
-
-	BottomRightCorner = GetActorLocation();
-	BottomRightCorner.Y -= VerticalSize;
-	BottomRightCorner.X -= HorizontalSize;
-
-	BottomLeftCorner = GetActorLocation();
-	BottomLeftCorner.Y -= VerticalSize;
-	BottomLeftCorner.X += HorizontalSize;
+	SetBoundaries();
+	
 
 }
 
@@ -94,4 +77,35 @@ FVector ASquareShape::CollidingWithEdge(FVector SpherePosition, float Radius)
 		return BottomRightCorner;
 
 	return SpherePosition;
+}
+void ASquareShape::MoveSquare(float AmountOfMovement)
+{
+	float DeltaTime = FApp::GetDeltaTime();
+	SetActorLocation(GetActorLocation() + (Velocity * DeltaTime * AmountOfMovement));
+}
+void ASquareShape::SetBoundaries()
+{
+	VerticalSize = GetActorScale().Y * 50;
+	HorizontalSize = GetActorScale().X * 50;
+
+	// get positions of all corners
+	TopLeftCorner = GetActorLocation();
+	TopLeftCorner.Y += VerticalSize;
+	TopLeftCorner.X += HorizontalSize;
+
+	TopRightCorner = GetActorLocation();
+	TopRightCorner.Y += VerticalSize;
+	TopRightCorner.X -= HorizontalSize;
+
+	BottomRightCorner = GetActorLocation();
+	BottomRightCorner.Y -= VerticalSize;
+	BottomRightCorner.X -= HorizontalSize;
+
+	BottomLeftCorner = GetActorLocation();
+	BottomLeftCorner.Y -= VerticalSize;
+	BottomLeftCorner.X += HorizontalSize;
+}
+void ASquareShape::OnOverlapBegin(AActor* Other)
+{
+	Super::OnOverlapBegin(Other);
 }

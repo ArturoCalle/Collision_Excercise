@@ -16,6 +16,9 @@ class COLLISIONEXCERCISE_API ABreakoutPlayerController : public APlayerControlle
 public:
 	class ABreakoutPlayerCharacter* PlayerCharacter;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class APhysicsEngine* PhysicsEngine;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -24,5 +27,7 @@ public:
 	virtual void Tick(float Deltatime)override;
 
 	void MoveRight(float Value);
+	void ActivateDebug();
+	void DeactivateDebug();
 	
 };

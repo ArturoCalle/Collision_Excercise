@@ -22,6 +22,7 @@ void ABreakoutPlayerCharacter::BeginPlay()
 	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, EAttachmentRule::SnapToTarget, false);
 	//Paddle->AttachToActor(this, AttachmentRules);
 	Paddle->SetActorScale3D(FVector(1.0f, 5.0f, 1.0f));
+	Paddle->SetBoundaries();
 	
 }
 
@@ -34,9 +35,6 @@ void ABreakoutPlayerCharacter::Tick(float DeltaTime)
 
 void ABreakoutPlayerCharacter::MoveRight(float Value)
 {
-	if (Value != 0.0)
-	{
-		const FVector Direction = FVector::RightVector;
-		Paddle->SetActorLocation((Direction * (MovementSpeed * FApp::GetDeltaTime() * Value))+ Paddle->GetActorLocation());
-	}
+	const FVector Direction = FVector::RightVector;
+	Paddle->Velocity = Direction * (MovementSpeed * Value);
 }

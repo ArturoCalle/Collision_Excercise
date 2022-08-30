@@ -18,6 +18,8 @@ public:
 	UPROPERTY(Transient)
 	float LoadCounter = 4;
 
+	bool ShouldDebug;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -31,4 +33,6 @@ public:
 	void EvaluateCollisions(class ASphereShape* Sphere,  ASphereShape* Sphere2, float DeltaTime);
 	void EvaluateCollisions(ASphereShape* Sphere, class ALineShape* Line, float DeltaTime);
 	void EvaluateCollisions(ASphereShape* Sphere, class ASquareShape* Square, float DeltaTime);
+
+	void PrintDebug(ASphereShape* Sphere, ASquareShape* Square);
 };

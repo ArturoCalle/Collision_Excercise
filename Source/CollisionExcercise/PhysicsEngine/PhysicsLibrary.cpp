@@ -70,29 +70,7 @@ bool UPhysicsLibrary::CalculateCollision(FVector SpherePosition, float SphereRad
 }
 bool UPhysicsLibrary::CalculateCollision(FVector SpherePosition, float SphereRadius, class ASquareShape* Square)
 {	
-	//calculations taken from https://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection
-	/*
 	
-	FVector CircleDistance = FVector((float)FMath::Abs(SpherePosition.X - Square->GetActorLocation().X),
-								  	 (float)FMath::Abs(SpherePosition.Y - Square->GetActorLocation().Y),
-								     0.0f);
-	if(CircleDistance.X > (Square->HorizontalSize / 2 + SphereRadius))
-		return false;
-	if(CircleDistance.Y > (Square->VerticalSize / 2 + SphereRadius))
-		return false;
-	if(CircleDistance.X <= (Square->HorizontalSize / 2 ))
-		return true;
-	if (CircleDistance.Y <= (Square->VerticalSize / 2))
-		return true;
-
-	float CornerDistSq = ((CircleDistance.X - Square->HorizontalSize / 2) * (CircleDistance.X - Square->HorizontalSize / 2)) + ((CircleDistance.Y - Square->VerticalSize / 2) * (CircleDistance.Y - Square->VerticalSize / 2));
-
-	return (CornerDistSq <= (SphereRadius * SphereRadius));
-	
-	/*
-	old collision 
-	*/
-
 	FVector EdgeCollision = Square->CollidingWithEdge(SpherePosition, SphereRadius);
 	if (EdgeCollision != SpherePosition)
 	{
@@ -108,9 +86,12 @@ bool UPhysicsLibrary::CalculateCollision(FVector SpherePosition, float SphereRad
 		}
 	}
 
+
+	//calculations taken from https://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection
 	FVector CircleDistance = FVector((float)FMath::Abs(SpherePosition.X - Square->GetActorLocation().X),
-									(float)FMath::Abs(SpherePosition.Y - Square->GetActorLocation().Y),
-									0.0f);
+		(float)FMath::Abs(SpherePosition.Y - Square->GetActorLocation().Y),
+		0.0f);
+
 	if (CircleDistance.X > (Square->HorizontalSize / 2 + SphereRadius))
 		return false;
 	if (CircleDistance.Y > (Square->VerticalSize / 2 + SphereRadius))
@@ -119,11 +100,11 @@ bool UPhysicsLibrary::CalculateCollision(FVector SpherePosition, float SphereRad
 		return true;
 	if (CircleDistance.Y <= (Square->VerticalSize / 2))
 		return true;
+	
 
 	float CornerDistSq = ((CircleDistance.X - Square->HorizontalSize / 2) * (CircleDistance.X - Square->HorizontalSize / 2)) + ((CircleDistance.Y - Square->VerticalSize / 2) * (CircleDistance.Y - Square->VerticalSize / 2));
 
 	return (CornerDistSq <= (SphereRadius * SphereRadius));
-	//return false;
 }
 
 //call in case of collision
@@ -180,7 +161,6 @@ void UPhysicsLibrary::SolveCollision(ASphereShape* Sphere1, ASphereShape* Sphere
 	}
 	
 }
-
 void UPhysicsLibrary::SolveCollision(ASphereShape* Sphere, ALineShape* Line)
 {
 	FVector Distance = Line->GetProyectionOverLine(Sphere->GetActorLocation());
@@ -209,6 +189,7 @@ void UPhysicsLibrary::SolveCollision(ASphereShape* Sphere, ASquareShape* Square,
 		Sphere->Velocity.Y = -Sphere->Velocity.Y;
 	}
 }
+
 void UPhysicsLibrary::SolveCollisionSquareEdge(ASphereShape* Sphere, ASquareShape* Square, FVector ContactPoint)
 {
 	FVector CollisionWithEdge = Square->CollidingWithEdge(Sphere->GetActorLocation(), Sphere->Radius);
@@ -278,7 +259,6 @@ float UPhysicsLibrary::SweepSphereTest(ASphereShape* DynamicSphere, ASphereShape
 	*ContactPoint = SimulatedDynamicSpherePosition;
 	return 1.0;
 }
-
 float UPhysicsLibrary::SweepLineTest(ASphereShape* Sphere, ALineShape* Line, FVector* ContactPoint, float DesiredDelta)
 {
 	FVector ProyectionSphereOnLine = Line->GetProyectionOverLine(Sphere->GetActorLocation());
@@ -302,7 +282,6 @@ float UPhysicsLibrary::SweepLineTest(ASphereShape* Sphere, ALineShape* Line, FVe
 	
 	return 1.0;
 }
-
 float UPhysicsLibrary::SweepSquareTest(ASphereShape* Sphere, ASquareShape* Square, FVector* ContactPoint, float DesiredDelta, UWorld* WorldContext)
 {
 	FVector SphereProyectedPosition = Sphere->GetActorLocation() + (DesiredDelta * Sphere->Velocity);

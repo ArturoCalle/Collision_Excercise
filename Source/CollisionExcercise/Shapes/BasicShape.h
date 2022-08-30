@@ -15,7 +15,7 @@ public:
 	// Sets default values for this actor's properties
 	ABasicShape();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sphere Data")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Velocity")
 	FVector Velocity;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mesh")
@@ -27,6 +27,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Collision)
 	class UMaterial* NoCollisionMaterial;
 
+	UPROPERTY(Transient)
+	TObjectPtr<AActor> OtherActor;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -36,5 +39,5 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void SetColliding(bool bIsColliding);
-
+	virtual void OnOverlapBegin(AActor* Other);
 };

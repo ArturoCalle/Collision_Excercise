@@ -44,4 +44,8 @@ public:
 	FVector GetProyectionSquare(FVector Other);
 	FVector CollidingWithEdge(FVector SpherePosition, float Radius);
 	
+	void MoveSquare(float AmountOfMovement);
+	void SetBoundaries();
+
+	virtual void OnOverlapBegin(AActor* Other) override;
 };
