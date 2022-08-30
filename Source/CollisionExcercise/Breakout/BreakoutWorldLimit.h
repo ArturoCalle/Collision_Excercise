@@ -13,5 +13,6 @@ UCLASS()
 class COLLISIONEXCERCISE_API ABreakoutWorldLimit : public ASquareShape
 {
 	GENERATED_BODY()
-	
+public:
+	virtual void OnOverlapBegin(AActor* Other) override;
 };

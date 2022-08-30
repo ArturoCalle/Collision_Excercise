@@ -162,13 +162,13 @@ void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, class ASquareShape
 		{
 			UPhysicsLibrary::SolveCollisionSquareEdge(Sphere, Square, ContactPoint);
 			Sphere->OnOverlapBegin(Square);
-			Square->OnOverlapBegin(Square);
+			Square->OnOverlapBegin(Sphere);
 		}
 		else
 		{
 			UPhysicsLibrary::SolveCollision(Sphere, Square, ContactPoint );
 			Sphere->OnOverlapBegin(Square);
-			Square->OnOverlapBegin(Square);
+			Square->OnOverlapBegin(Sphere);
 		}
 
 	}

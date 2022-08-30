@@ -15,8 +15,8 @@ public:
 	// Sets default values for this character's properties
 	ABreakoutPlayerCharacter();
 
-	UPROPERTY(Transient)
-	float MovementSpeed = 800;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Paddle")
+	float MovementSpeed = 200;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Paddle")
 	TSubclassOf<class ASquareShape> SquareShapeBP;
@@ -24,6 +24,17 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Paddle")
 	TObjectPtr<ASquareShape> Paddle;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Balls")
+	TObjectPtr<class ABreakoutBall> AttachedBall;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Balls")
+	TSubclassOf<ABreakoutBall> Ball_BP;
+
+	UPROPERTY(Transient)
+	TObjectPtr<class ABreakoutPlayerController> PlayerController;
+
+	UPROPERTY(Transient)
+	float SpawnCoolDown;
 
 
 protected:
@@ -35,5 +46,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void MoveRight(float Value);
+	void SpawnBall();
+	void ShootBall();
 
 };

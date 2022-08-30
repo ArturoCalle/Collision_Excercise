@@ -14,10 +14,17 @@ class COLLISIONEXCERCISE_API ABreakoutPlayerController : public APlayerControlle
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
 	class ABreakoutPlayerCharacter* PlayerCharacter;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Physics")
 	class APhysicsEngine* PhysicsEngine;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game State")
+	class ABreakoutGameStateBase* GameState;
+
+	UPROPERTY(Transient)
+	bool CanSpawn;
 
 protected:
 	virtual void BeginPlay() override;
@@ -27,6 +34,7 @@ public:
 	virtual void Tick(float Deltatime)override;
 
 	void MoveRight(float Value);
+	void Shoot();
 	void ActivateDebug();
 	void DeactivateDebug();
 	

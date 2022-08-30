@@ -14,7 +14,19 @@ class COLLISIONEXCERCISE_API ABreakoutBall : public ASphereShape
 {
 	GENERATED_BODY()
 
+	
 public:
+	UPROPERTY(Transient)
+	TObjectPtr<class ABreakoutPlayerCharacter> Player;
+		
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 	void Kill();
-	void SetPlayerReference(class BreakoutPlayerCharacter* Player);
+	void SetPlayerReference(class ABreakoutPlayerCharacter* Player);
 };
