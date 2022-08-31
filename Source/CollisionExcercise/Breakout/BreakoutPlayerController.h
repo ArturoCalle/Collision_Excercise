@@ -32,6 +32,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "World Boundaries")
 	float RightLimit;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "World Boundaries")
+	float TopLimit;
+
+
 protected:
 	virtual void BeginPlay() override;
 

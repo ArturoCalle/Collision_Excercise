@@ -19,7 +19,7 @@ public:
 	UPROPERTY(Transient)
 	TObjectPtr<class ABreakoutPlayerCharacter> Player;
 
-	UPROPERTY(Transient)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Powerup")
 	int32 PowerUpDuration;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
@@ -34,7 +34,7 @@ public:
 	UPROPERTY(Transient)
 	float MaxVelocity;
 
-	UPROPERTY(Transient)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Powerup")
 	float DefaultRadius;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ball BP")
@@ -47,8 +47,10 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual void OnOverlapBegin(AActor* Other) override;
 
 	void Kill();
 	void SetPlayerReference(class ABreakoutPlayerCharacter* Player);
 	void SplitBall();
+	void ResetPowerup();
 };

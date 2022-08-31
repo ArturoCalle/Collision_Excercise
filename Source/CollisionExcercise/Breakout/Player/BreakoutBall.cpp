@@ -33,6 +33,21 @@ void ABreakoutBall::Tick(float DeltaTime)
 	}
 }
 
+void ABreakoutBall::OnOverlapBegin(AActor* Other)
+{
+	Super::OnOverlapBegin(Other);
+	ABreakoutPlayerCharacter* PlayerCharacter = Cast<ABreakoutPlayerCharacter>(Other);
+	
+	if(PlayerCharacter)
+	{
+		if (PowerUpDuration > 0)
+			PowerUpDuration--;
+		if (PowerUpDuration == 0)
+			ResetPowerup();
+	}
+	
+}
+
 void ABreakoutBall::Kill()
 {
 	ABreakoutGameStateBase* GameState = Cast<ABreakoutGameStateBase>(GetWorld()->GetGameState());
@@ -46,7 +61,25 @@ void ABreakoutBall::SetPlayerReference(ABreakoutPlayerCharacter* PlayerCharacter
 {
 	Player = PlayerCharacter;
 }
-void SplitBall()
+void ABreakoutBall::SplitBall()
 {
+	FVector SpawnLocation = GetActorLocation();
+	SpawnLocation.X -= Radius * 2 / GetActorScale().Size();
+	ABreakoutBall* NewBall = GetWorld()->SpawnActor<ABreakoutBall>(Ball_BP, SpawnLocation , GetActorRotation());
+	NewBall->Velocity = Velocity;
+	NewBall->Velocity.X += 20;
+	Velocity.X -= 20;
 
+	ABreakoutGameStateBase* GameState = Cast<ABreakoutGameStateBase>(GetWorld()->GetGameState());
+	if (GameState)
+	{
+		GameState->ModifyBallAmount(1);
+	}
+}
+void ABreakoutBall::ResetPowerup()
+{
+	Radius = DefaultRadius;
+	MinVelocity += DefaultMinVelocity;
+	MaxVelocity += DefaultMaxVelocity;
+	SetBoundaries();
 }

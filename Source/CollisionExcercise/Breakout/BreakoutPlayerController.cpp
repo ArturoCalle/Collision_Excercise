@@ -3,6 +3,7 @@
 
 #include "Breakout/BreakoutPlayerController.h"
 #include "Player/BreakoutPlayerCharacter.h"
+#include "Player/BreakoutBall.h"
 #include "../PhysicsEngine/PhysicsEngine.h"
 #include "BreakoutGameStateBase.h"
 #include "../Shapes/LineShape.h"
@@ -43,6 +44,10 @@ void ABreakoutPlayerController::BeginPlay()
 		{
 			RightLimit = L->GetActorLocation().Y;
 		}
+		if (L->GetActorLocation().Y > TopLimit)
+		{
+			TopLimit = L->GetActorLocation().Y;
+		}
 	}
 }
 
@@ -59,6 +64,23 @@ void ABreakoutPlayerController::SetupInputComponent()
 void ABreakoutPlayerController::Tick(float Deltatime)
 {
 	Super::Tick(Deltatime);
+
+	TArray<AActor*> Balls;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABreakoutBall::StaticClass(), Balls);
+	for (AActor* B : Balls)
+	{
+		ABreakoutBall* Ball = Cast<ABreakoutBall>(B);
+		if(Ball)
+		{
+			FVector Location = Ball->GetActorLocation();
+			if (Location.X > TopLimit)
+				Ball->Kill();
+			if (Location.Y > RightLimit + 200)
+				Ball->Kill();
+			if (Location.Y < LeftLimit - 200)
+				Ball->Kill();
+		}
+	}
 }
 void ABreakoutPlayerController::Shoot()
 {
@@ -73,7 +95,7 @@ void ABreakoutPlayerController::MoveRight(float Value)
 	{
 		if (Value > 0.0)
 		{
-			if ((PlayerCharacter->GetActorLocation().Y + (PlayerCharacter->HorizontalSize*5)) < RightLimit)
+			if ((PlayerCharacter->GetActorLocation().Y + (PlayerCharacter->HorizontalSize* PlayerCharacter->GetActorScale().Y)) < RightLimit)
 			{
 				PlayerCharacter->MoveRight(Value);
 				return;
@@ -81,7 +103,7 @@ void ABreakoutPlayerController::MoveRight(float Value)
 		}
 		else if (Value < 0.0)
 		{
-			if ((PlayerCharacter->GetActorLocation().Y - (PlayerCharacter->HorizontalSize*5)) > LeftLimit)
+			if ((PlayerCharacter->GetActorLocation().Y - (PlayerCharacter->HorizontalSize * PlayerCharacter->GetActorScale().Y)) > LeftLimit)
 			{
 				PlayerCharacter->MoveRight(Value);
 				return;

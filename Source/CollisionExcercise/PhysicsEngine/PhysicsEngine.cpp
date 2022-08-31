@@ -185,13 +185,13 @@ void APhysicsEngine::PrintDebug(ASphereShape* Sphere, ASquareShape* Square)
 	//DrawDebugLine(GetWorld(), Sphere->GetActorLocation(), Square->GetActorLocation(), FColor::White, false, DeltaTime * 2, 2.0);
 	if (UPhysicsLibrary::CalculateCollision(Sphere->GetActorLocation(), Sphere->Radius, Square))
 	{
-		DrawDebugSphere(GetWorld(), Sphere->GetActorLocation(), Sphere->Radius / Sphere->GetActorScale().Size(), 20, FColor::Red, false, 1.0, 1.0);
+		DrawDebugSphere(GetWorld(), Sphere->GetActorLocation(), Sphere->Radius , 20, FColor::Red, false, 1.0, 1.0);
 		DrawDebugBox(GetWorld(), Square->GetActorLocation(), FVector(Square->HorizontalSize, Square->VerticalSize, 10.0), FColor::Red, false, 1.0, 1.0);
 	}
 	
 	else
 	{
-		DrawDebugSphere(GetWorld(), Sphere->GetActorLocation(), Sphere->Radius / Sphere->GetActorScale().Size(), 20, FColor::White, false, 0.1, 2.0);
+		DrawDebugSphere(GetWorld(), Sphere->GetActorLocation(), Sphere->Radius, 20, FColor::White, false, 0.1, 2.0);
 		DrawDebugBox(GetWorld(),Square->GetActorLocation(),FVector(Square->HorizontalSize, Square->VerticalSize, 10.0),FColor::White, false, 0.5,2.0);
 	}
 	

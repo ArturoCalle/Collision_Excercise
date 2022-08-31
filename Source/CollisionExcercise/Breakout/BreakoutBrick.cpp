@@ -72,12 +72,12 @@ void ABreakoutBrick::ApplyPowerup(ABreakoutBall* Ball)
 	int32 RandomPowerUp = (int32)FMath::RandRange(0, 4);
 	ABreakoutPlayerController* PlayerController = Cast<ABreakoutPlayerController>(GetWorld()->GetFirstPlayerController());
 
+
 	switch(RandomPowerUp)
 	{
 		case 0:
 		{
 			//Giant Ball
-			UE_LOG(LogTemp, Warning, TEXT("GiantBall"));
 			Ball->PowerUpDuration += 2;
 			Ball->Radius += Ball->Radius;
 			Ball->MinVelocity -= Ball->MinVelocity / 2;
@@ -88,7 +88,6 @@ void ABreakoutBrick::ApplyPowerup(ABreakoutBall* Ball)
 		case 1:
 		{
 			//Tiny Ball
-			UE_LOG(LogTemp, Warning, TEXT("TinyBall"));
 			Ball->PowerUpDuration += 2;
 			Ball->Radius -= Ball->Radius/2;
 			Ball->MinVelocity += Ball->MinVelocity;
@@ -99,13 +98,12 @@ void ABreakoutBrick::ApplyPowerup(ABreakoutBall* Ball)
 		case 2:
 		{
 			//MultiplierBall
-			UE_LOG(LogTemp, Warning, TEXT("MultiBall"));
+			Ball->SplitBall();
 		}
 			break;
 		case 3:
 		{
 			//Small Paddle
-			UE_LOG(LogTemp, Warning, TEXT("Big paddle"));
 			FVector NewScale = PlayerController->PlayerCharacter->GetActorScale();
 			PlayerController->PlayerCharacter->SetActorScale3D(FVector(NewScale.X, NewScale.Y * 2, NewScale.Z));
 			PlayerController->PlayerCharacter->PowerUpDuration += 2;
@@ -115,7 +113,6 @@ void ABreakoutBrick::ApplyPowerup(ABreakoutBall* Ball)
 		case 4:
 		{
 			//Small Paddle
-			UE_LOG(LogTemp, Warning, TEXT("Small Paddle"));
 			FVector NewScale = PlayerController->PlayerCharacter->GetActorScale();
 			PlayerController->PlayerCharacter->SetActorScale3D(FVector(NewScale.X, NewScale.Y / 2, NewScale.Z));
 			PlayerController->PlayerCharacter->PowerUpDuration += 2;

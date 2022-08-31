@@ -273,7 +273,7 @@ float UPhysicsLibrary::SweepLineTest(ASphereShape* Sphere, ALineShape* Line, FVe
 	}
 
 	FVector SphereProyectedPosition = Sphere->GetActorLocation() + (DesiredDelta * Sphere->Velocity);
-	if (CalculateCollision(SphereProyectedPosition, Sphere->Radius, Line))
+	if (CalculateCollision(SphereProyectedPosition, Sphere->Radius / Sphere->GetActorScale().Size(), Line))
 	{
 		float OffsetAmount = ExpectedMovement - DistanceSphereToLine;
 		float AmountOfMovement = OffsetAmount/ExpectedMovement;

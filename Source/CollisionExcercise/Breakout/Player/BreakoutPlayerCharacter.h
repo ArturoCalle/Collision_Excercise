@@ -46,5 +46,6 @@ public:
 	void MoveRight(float Value);
 	void SpawnBall();
 	void ShootBall();
+	void ResetPowerup();
 
 };

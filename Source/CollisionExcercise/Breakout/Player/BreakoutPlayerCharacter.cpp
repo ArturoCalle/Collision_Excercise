@@ -36,7 +36,7 @@ void ABreakoutPlayerCharacter::Tick(float DeltaTime)
 
 	if(AttachedBall)
 	{
-		FVector BallLocation = FVector(GetActorLocation().X + VerticalSize / 2 + AttachedBall->Radius, GetActorLocation().Y , 0.0);
+		FVector BallLocation = FVector(GetActorLocation().X + HorizontalSize + AttachedBall->Radius, GetActorLocation().Y , 0.0);
 		AttachedBall->SetActorLocation(BallLocation);
 	}
 }
@@ -48,6 +48,7 @@ void ABreakoutPlayerCharacter::MoveRight(float Value)
 }
 void ABreakoutPlayerCharacter::SpawnBall()
 {
+	ResetPowerup();
 	if (SpawnCoolDown <= 0.0)
 	{
 		SpawnCoolDown = 0.5;
@@ -77,9 +78,25 @@ void ABreakoutPlayerCharacter::OnOverlapBegin(AActor* Other)
 	ABreakoutBall* Ball = Cast<ABreakoutBall>(Other);
 	if (Ball)
 	{
+		if (PowerUpDuration > 0)
+		{
+			PowerUpDuration--;
+		}
+		if (PowerUpDuration == 0)
+		{
+			ResetPowerup();
+		}
 		if (FMath::Abs(Ball->Velocity.Y) <= 10)
 		{
 			Ball->Velocity.Y += Velocity.Y / 20;
 		}
 	}
+}
+
+void ABreakoutPlayerCharacter::ResetPowerup()
+{
+	FVector NewScale = FVector(1.0, 5.0, 1.0);
+	PowerUpDuration = 0;
+	SetActorScale3D(NewScale);
+	SetBoundaries();
 }
