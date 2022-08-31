@@ -30,6 +30,9 @@ public:
 	UPROPERTY(Transient)
 	float SpawnCoolDown;
 
+	UPROPERTY(Transient)
+	int32 PowerUpDuration;
+
 
 protected:
 	// Called when the game starts or when spawned

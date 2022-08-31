@@ -3,7 +3,10 @@
 
 #include "BreakoutBrick.h"
 #include "Player/BreakoutBall.h"
+#include "Player/BreakoutPlayerCharacter.h"
 #include "BreakoutGameStateBase.h"
+#include "BreakoutPlayerController.h"
+#include "Materials/Material.h"
 
 void ABreakoutBrick::BeginPlay() 
 {
@@ -13,7 +16,17 @@ void ABreakoutBrick::BeginPlay()
 	{
 		GameState->AmountOfBricks++;
 	}
-	HitPoints = 3;
+
+	float powerUpRand = FMath::RandRange(0, 10);
+	if (powerUpRand < 3)
+	{
+		bHasPowerup = true;
+	}
+
+	if (!bHasPowerup)
+	{
+		Mesh->SetMaterial(0, Materials[HitPoints-1]);
+	}
 }
 
 void ABreakoutBrick::Tick(float DeltaTime) 
@@ -26,19 +39,90 @@ void ABreakoutBrick::OnOverlapBegin(AActor* Other)
 	ABreakoutBall* Ball = Cast<ABreakoutBall>(Other);
 	if (Ball)
 	{
-		HitBrick();
+		HitBrick(Other);
 	}
 }
-void ABreakoutBrick::HitBrick()
+void ABreakoutBrick::HitBrick(AActor* Other)
 {
 	HitPoints--;
 	if (HitPoints <= 0.0)
 	{
+		if (bHasPowerup)
+		{
+			ABreakoutBall* Ball = Cast<ABreakoutBall>(Other);
+			if(Ball)
+				ApplyPowerup(Ball);
+		}
 		ABreakoutGameStateBase* GameState = Cast<ABreakoutGameStateBase>(GetWorld()->GetGameState());
 		if (GameState)
 		{
 			GameState->AmountOfBricks--;
 		}
 		Destroy();
+	}
+	else
+	{
+		if(!bHasPowerup)
+			Mesh->SetMaterial(0, Materials[HitPoints - 1]);
+	}
+}
+
+void ABreakoutBrick::ApplyPowerup(ABreakoutBall* Ball)
+{
+	int32 RandomPowerUp = (int32)FMath::RandRange(0, 4);
+	ABreakoutPlayerController* PlayerController = Cast<ABreakoutPlayerController>(GetWorld()->GetFirstPlayerController());
+
+	switch(RandomPowerUp)
+	{
+		case 0:
+		{
+			//Giant Ball
+			UE_LOG(LogTemp, Warning, TEXT("GiantBall"));
+			Ball->PowerUpDuration += 2;
+			Ball->Radius += Ball->Radius;
+			Ball->MinVelocity -= Ball->MinVelocity / 2;
+			Ball->MaxVelocity -= Ball->MaxVelocity / 2;
+			Ball->SetBoundaries();
+		}
+			break;
+		case 1:
+		{
+			//Tiny Ball
+			UE_LOG(LogTemp, Warning, TEXT("TinyBall"));
+			Ball->PowerUpDuration += 2;
+			Ball->Radius -= Ball->Radius/2;
+			Ball->MinVelocity += Ball->MinVelocity;
+			Ball->MaxVelocity += Ball->MaxVelocity;
+			Ball->SetBoundaries();
+		}
+			break;
+		case 2:
+		{
+			//MultiplierBall
+			UE_LOG(LogTemp, Warning, TEXT("MultiBall"));
+		}
+			break;
+		case 3:
+		{
+			//Small Paddle
+			UE_LOG(LogTemp, Warning, TEXT("Big paddle"));
+			FVector NewScale = PlayerController->PlayerCharacter->GetActorScale();
+			PlayerController->PlayerCharacter->SetActorScale3D(FVector(NewScale.X, NewScale.Y * 2, NewScale.Z));
+			PlayerController->PlayerCharacter->PowerUpDuration += 2;
+			PlayerController->PlayerCharacter->SetBoundaries();
+		}
+			break;
+		case 4:
+		{
+			//Small Paddle
+			UE_LOG(LogTemp, Warning, TEXT("Small Paddle"));
+			FVector NewScale = PlayerController->PlayerCharacter->GetActorScale();
+			PlayerController->PlayerCharacter->SetActorScale3D(FVector(NewScale.X, NewScale.Y / 2, NewScale.Z));
+			PlayerController->PlayerCharacter->PowerUpDuration += 2;
+			PlayerController->PlayerCharacter->SetBoundaries();
+		}
+			break;
+		default: 
+			break;
 	}
 }

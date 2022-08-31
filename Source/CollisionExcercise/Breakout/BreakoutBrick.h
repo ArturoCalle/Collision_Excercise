@@ -6,6 +6,7 @@
 #include "Shapes/SquareShape.h"
 #include "BreakoutBrick.generated.h"
 
+
 /**
  * 
  */
@@ -21,6 +22,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PowerUP")
 	bool bHasPowerup;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Materials")
+	TArray<class UMaterial*> Materials;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -31,6 +35,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void OnOverlapBegin(AActor* Other) override;
-	void HitBrick();
+	void HitBrick(AActor* Other);
+	void ApplyPowerup(class ABreakoutBall* Other);
 	
 };

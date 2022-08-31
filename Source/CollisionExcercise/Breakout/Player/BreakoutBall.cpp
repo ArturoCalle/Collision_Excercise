@@ -4,11 +4,16 @@
 #include "BreakoutBall.h"
 #include "BreakoutPlayerCharacter.h"
 #include "../BreakoutGameStateBase.h"
-#include "Materials/Material.h"
 
 void ABreakoutBall::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MinVelocity = DefaultMinVelocity;
+	MaxVelocity = DefaultMaxVelocity;
+	DefaultRadius = Radius;
+
+	Velocity = FVector(0.0f, 0.0f, 0.0f);
 
 }
 
@@ -16,14 +21,14 @@ void ABreakoutBall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	float VelocitySize = Velocity.Size();
-	if (VelocitySize < 70)
+	if (VelocitySize < MinVelocity)
 	{
-		float multiplier = 70 / VelocitySize;
+		float multiplier = MinVelocity / VelocitySize;
 		Velocity = Velocity * multiplier;
 	}
-	else if (VelocitySize > 150)
+	else if (VelocitySize > MaxVelocity)
 	{
-		float multiplier = 150 / VelocitySize;
+		float multiplier = MaxVelocity / VelocitySize;
 		Velocity = Velocity * multiplier;
 	}
 }
@@ -40,4 +45,8 @@ void ABreakoutBall::Kill()
 void ABreakoutBall::SetPlayerReference(ABreakoutPlayerCharacter* PlayerCharacter)
 {
 	Player = PlayerCharacter;
+}
+void SplitBall()
+{
+
 }

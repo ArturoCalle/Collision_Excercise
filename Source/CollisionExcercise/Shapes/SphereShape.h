@@ -16,7 +16,7 @@ public:
 	// Sets default values for this actor's properties
 	ASphereShape();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sphere Data")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sphere Data")
 	float Radius;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sphere Data")
@@ -24,8 +24,6 @@ public:
 
 	UPROPERTY(Transient)
 	bool bIsColliding;
-
-
 
 
 protected:
@@ -37,6 +35,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void MoveSphere(float AmountOfMovement);
+	void SetBoundaries();
 
 	virtual void OnOverlapBegin(AActor* Other) override;
 };

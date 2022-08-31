@@ -18,6 +18,27 @@ class COLLISIONEXCERCISE_API ABreakoutBall : public ASphereShape
 public:
 	UPROPERTY(Transient)
 	TObjectPtr<class ABreakoutPlayerCharacter> Player;
+
+	UPROPERTY(Transient)
+	int32 PowerUpDuration;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
+	float DefaultMinVelocity;
+
+	UPROPERTY(Transient)
+	float MinVelocity;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
+	float DefaultMaxVelocity;
+
+	UPROPERTY(Transient)
+	float MaxVelocity;
+
+	UPROPERTY(Transient)
+	float DefaultRadius;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ball BP")
+	TSubclassOf<ABreakoutBall> Ball_BP;
 		
 protected:
 	// Called when the game starts or when spawned
@@ -29,4 +50,5 @@ public:
 
 	void Kill();
 	void SetPlayerReference(class ABreakoutPlayerCharacter* Player);
+	void SplitBall();
 };
