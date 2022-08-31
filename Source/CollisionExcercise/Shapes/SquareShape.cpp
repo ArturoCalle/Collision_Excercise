@@ -12,7 +12,6 @@ void ASquareShape::BeginPlay()
 	
 
 }
-
 void ASquareShape::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

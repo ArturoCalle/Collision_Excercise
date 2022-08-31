@@ -26,6 +26,12 @@ public:
 	UPROPERTY(Transient)
 	bool CanSpawn;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "World Boundaries")
+	float LeftLimit;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "World Boundaries")
+	float RightLimit;
+
 protected:
 	virtual void BeginPlay() override;
 

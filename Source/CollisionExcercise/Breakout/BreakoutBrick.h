@@ -15,8 +15,11 @@ class COLLISIONEXCERCISE_API ABreakoutBrick : public ASquareShape
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HitPoints")
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "HitPoints")
 	int32 HitPoints;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PowerUP")
+	bool bHasPowerup;
 
 
 protected:

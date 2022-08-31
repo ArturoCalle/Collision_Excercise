@@ -4,22 +4,27 @@
 #include "BreakoutBall.h"
 #include "BreakoutPlayerCharacter.h"
 #include "../BreakoutGameStateBase.h"
+#include "Materials/Material.h"
 
 void ABreakoutBall::BeginPlay()
 {
 	Super::BeginPlay();
+
 }
 
 void ABreakoutBall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (Velocity.Size() < 100)
+	float VelocitySize = Velocity.Size();
+	if (VelocitySize < 70)
 	{
-
+		float multiplier = 70 / VelocitySize;
+		Velocity = Velocity * multiplier;
 	}
-	if (Velocity.Size() > 500)
+	else if (VelocitySize > 150)
 	{
-
+		float multiplier = 150 / VelocitySize;
+		Velocity = Velocity * multiplier;
 	}
 }
 

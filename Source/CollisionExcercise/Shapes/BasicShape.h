@@ -21,15 +21,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mesh")
 	class UStaticMeshComponent* Mesh;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Collision)
-	class UMaterial* CollisionMaterial;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Collision)
-	class UMaterial* NoCollisionMaterial;
-
-	UPROPERTY(Transient)
-	TObjectPtr<AActor> OtherActor;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "../../Shapes/SquareShape.h"
 #include "BreakoutPlayerCharacter.generated.h"
 
 UCLASS()
-class COLLISIONEXCERCISE_API ABreakoutPlayerCharacter : public AActor
+class COLLISIONEXCERCISE_API ABreakoutPlayerCharacter : public ASquareShape
 {
 	GENERATED_BODY()
 
@@ -15,14 +15,8 @@ public:
 	// Sets default values for this character's properties
 	ABreakoutPlayerCharacter();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Paddle")
-	float MovementSpeed = 200;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Paddle")
-	TSubclassOf<class ASquareShape> SquareShapeBP;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Paddle")
-	TObjectPtr<ASquareShape> Paddle;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Paddle")
+	float MovementSpeed = 1000;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Balls")
 	TObjectPtr<class ABreakoutBall> AttachedBall;
@@ -44,6 +38,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual void OnOverlapBegin(AActor* Other) override;
 
 	void MoveRight(float Value);
 	void SpawnBall();

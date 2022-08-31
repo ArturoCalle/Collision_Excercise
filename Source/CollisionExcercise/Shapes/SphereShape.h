@@ -36,7 +36,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void ChangeMaterial();
 	void MoveSphere(float AmountOfMovement);
 
 	virtual void OnOverlapBegin(AActor* Other) override;

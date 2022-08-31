@@ -21,7 +21,6 @@ void ASphereShape::BeginPlay()
 	float Scale = Radius / 50;
 
 	Mesh->SetRelativeScale3D(FVector(Scale, Scale, Scale));
-	Mesh->SetMaterial(0, CollisionMaterial);
 
 	
 }
@@ -30,29 +29,8 @@ void ASphereShape::BeginPlay()
 void ASphereShape::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
-	ChangeMaterial();
-
 }
-void ASphereShape::ChangeMaterial()
-{
-	
-	if (bIsColliding)
-	{
-		if (Mesh->GetMaterial(0) != CollisionMaterial)
-		{
-			Mesh->SetMaterial(0,CollisionMaterial);
-		}
-	}
-	else
-	{
-		if (Mesh->GetMaterial(0) != NoCollisionMaterial)
-		{
-			Mesh->SetMaterial(0, NoCollisionMaterial);
-		}
-	}
 
-}
 void ASphereShape::MoveSphere(float AmountOfMovement)
 {
 	float DeltaTime = FApp::GetDeltaTime();

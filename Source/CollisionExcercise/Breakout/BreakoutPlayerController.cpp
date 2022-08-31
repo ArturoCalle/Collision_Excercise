@@ -5,6 +5,7 @@
 #include "Player/BreakoutPlayerCharacter.h"
 #include "../PhysicsEngine/PhysicsEngine.h"
 #include "BreakoutGameStateBase.h"
+#include "../Shapes/LineShape.h"
 #include "Kismet/GameplayStatics.h"
 
 void ABreakoutPlayerController::BeginPlay()
@@ -29,6 +30,20 @@ void ABreakoutPlayerController::BeginPlay()
 	}
 
 	GameState = Cast<ABreakoutGameStateBase>(GetWorld()->GetGameState());
+
+	TArray<AActor*> Limits;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALineShape::StaticClass(), Limits);
+	for (AActor* L : Limits)
+	{
+		if (L->GetActorLocation().Y < LeftLimit)
+		{
+			LeftLimit = L->GetActorLocation().Y;
+		}
+		if (L->GetActorLocation().Y > RightLimit)
+		{
+			RightLimit = L->GetActorLocation().Y;
+		}
+	}
 }
 
 void ABreakoutPlayerController::SetupInputComponent()
@@ -56,7 +71,25 @@ void ABreakoutPlayerController::MoveRight(float Value)
 {
 	if (PlayerCharacter)
 	{
-		PlayerCharacter->MoveRight(Value);
+		if (Value > 0.0)
+		{
+			if ((PlayerCharacter->GetActorLocation().Y + (PlayerCharacter->HorizontalSize*5)) < RightLimit)
+			{
+				PlayerCharacter->MoveRight(Value);
+				return;
+			}
+		}
+		else if (Value < 0.0)
+		{
+			if ((PlayerCharacter->GetActorLocation().Y - (PlayerCharacter->HorizontalSize*5)) > LeftLimit)
+			{
+				PlayerCharacter->MoveRight(Value);
+				return;
+			}
+		}
+		PlayerCharacter->MoveRight(0.0);
+		
+		
 	}
 }
 
