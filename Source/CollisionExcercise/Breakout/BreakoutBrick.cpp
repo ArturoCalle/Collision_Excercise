@@ -18,7 +18,7 @@ void ABreakoutBrick::BeginPlay()
 	}
 
 	float powerUpRand = FMath::RandRange(0, 10);
-	if (powerUpRand < 1)
+	if (powerUpRand < 2)
 	{
 		bHasPowerup = true;
 	}

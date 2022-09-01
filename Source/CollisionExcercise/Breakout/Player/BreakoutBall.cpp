@@ -64,7 +64,7 @@ void ABreakoutBall::SetPlayerReference(ABreakoutPlayerCharacter* PlayerCharacter
 void ABreakoutBall::SplitBall()
 {
 	FVector SpawnLocation = GetActorLocation();
-	SpawnLocation.X -= Radius * 2 / GetActorScale().Size();
+	SpawnLocation.X -= Radius / DefaultScale * 2 / GetActorScale().Size();
 	ABreakoutBall* NewBall = GetWorld()->SpawnActor<ABreakoutBall>(Ball_BP, SpawnLocation , GetActorRotation());
 	NewBall->Velocity = Velocity;
 	NewBall->Velocity.X += 20;

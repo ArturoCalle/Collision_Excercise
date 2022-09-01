@@ -17,6 +17,7 @@ ASphereShape::ASphereShape()
 // Called when the game starts or when spawned
 void ASphereShape::BeginPlay()
 {
+	DefaultScale = Radius / 50;
 	SetBoundaries();
 	Super::BeginPlay();
 	
@@ -39,7 +40,7 @@ void ASphereShape::OnOverlapBegin(AActor* Other)
 }
 void ASphereShape::SetBoundaries()
 {
-	float Scale = Radius / 50;
+	 float Scale = Radius / 50;
 
 	Mesh->SetRelativeScale3D(FVector(Scale, Scale, Scale));
 }

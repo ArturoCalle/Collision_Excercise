@@ -16,8 +16,11 @@ public:
 	// Sets default values for this actor's properties
 	ASphereShape();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sphere Data")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sphere Data")
 	float Radius;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sphere Data")
+	float DefaultScale;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sphere Data")
 	float Mass;

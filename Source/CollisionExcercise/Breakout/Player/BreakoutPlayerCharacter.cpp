@@ -36,7 +36,7 @@ void ABreakoutPlayerCharacter::Tick(float DeltaTime)
 
 	if(AttachedBall)
 	{
-		FVector BallLocation = FVector(GetActorLocation().X + HorizontalSize + AttachedBall->Radius, GetActorLocation().Y , 0.0);
+		FVector BallLocation = FVector(GetActorLocation().X + HorizontalSize + (AttachedBall->Radius/ AttachedBall->DefaultScale), GetActorLocation().Y , 0.0);
 		AttachedBall->SetActorLocation(BallLocation);
 	}
 }

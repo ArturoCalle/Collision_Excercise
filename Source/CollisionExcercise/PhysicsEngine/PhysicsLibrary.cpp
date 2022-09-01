@@ -14,7 +14,7 @@ bool UPhysicsLibrary::CalculateCollision(ASphereShape* Sphere1, ASphereShape* Sp
 	{
 		FVector Diference = Sphere1->GetActorLocation() - Sphere2->GetActorLocation();
 		float Distance = Diference.Size();
-		float CollisionDistance = FMath::Abs(Sphere1->Radius) + FMath::Abs(Sphere2->Radius);
+		float CollisionDistance = FMath::Abs(Sphere1->Radius / Sphere1->DefaultScale) + FMath::Abs(Sphere2->Radius / Sphere2->DefaultScale);
 
 		if (Distance <= CollisionDistance)
 		{
@@ -226,7 +226,7 @@ float UPhysicsLibrary::SweepSphereTest(ASphereShape* DynamicSphere, ASphereShape
 	FVector SimulatedDynamicSpherePosition = DynamicSphere->GetActorLocation() + (DesiredDelta * DynamicSphere->Velocity);
 	FVector SimulationVSStaticCenterDistance = SimulatedDynamicSpherePosition - StaticSphere->GetActorLocation();
 	float SpheresCenterDistance = SimulationVSStaticCenterDistance.Size();
-	float RadiusSum = FMath::Abs(DynamicSphere->Radius) + FMath::Abs(StaticSphere->Radius);
+	float RadiusSum = FMath::Abs(DynamicSphere->Radius/ DynamicSphere->DefaultScale) + FMath::Abs(StaticSphere->Radius/ StaticSphere->DefaultScale);
 
 	if (SpheresCenterDistance <= RadiusSum)
 	{
@@ -273,7 +273,7 @@ float UPhysicsLibrary::SweepLineTest(ASphereShape* Sphere, ALineShape* Line, FVe
 	}
 
 	FVector SphereProyectedPosition = Sphere->GetActorLocation() + (DesiredDelta * Sphere->Velocity);
-	if (CalculateCollision(SphereProyectedPosition, Sphere->Radius / Sphere->GetActorScale().Size(), Line))
+	if (CalculateCollision(SphereProyectedPosition, Sphere->Radius / Sphere->DefaultScale, Line))
 	{
 		float OffsetAmount = ExpectedMovement - DistanceSphereToLine;
 		float AmountOfMovement = OffsetAmount/ExpectedMovement;
@@ -287,11 +287,11 @@ float UPhysicsLibrary::SweepSquareTest(ASphereShape* Sphere, ASquareShape* Squar
 	FVector SphereProyectedPosition = Sphere->GetActorLocation() + (DesiredDelta * Sphere->Velocity);
 	if (!Sphere->Velocity.SizeSquared() == 0)
 	{
-		if (CalculateCollision(SphereProyectedPosition, Sphere->Radius, Square))
+		if (CalculateCollision(SphereProyectedPosition, Sphere->Radius/ Sphere->DefaultScale, Square))
 		{
 			float DistanceSphereToSquare;
-			float ExpectedMovement = (DesiredDelta * Sphere->Velocity).Size() + Sphere->Radius;
-			FVector EdgeCollision = Square->CollidingWithEdge(SphereProyectedPosition, Sphere->Radius);
+			float ExpectedMovement = (DesiredDelta * Sphere->Velocity).Size() + (Sphere->Radius/Sphere->DefaultScale);
+			FVector EdgeCollision = Square->CollidingWithEdge(SphereProyectedPosition, Sphere->Radius / Sphere->DefaultScale);
 			if (SphereProyectedPosition != EdgeCollision)
 			{
 				DistanceSphereToSquare = (EdgeCollision - Sphere->GetActorLocation()).Size();
