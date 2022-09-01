@@ -95,8 +95,7 @@ void ABreakoutPlayerCharacter::OnOverlapBegin(AActor* Other)
 
 void ABreakoutPlayerCharacter::ResetPowerup()
 {
-	FVector NewScale = FVector(1.0, 5.0, 1.0);
 	PowerUpDuration = 0;
-	SetActorScale3D(NewScale);
+	SetActorScale3D(FVector(1.0, 5.0, 1.0));
 	SetBoundaries();
 }

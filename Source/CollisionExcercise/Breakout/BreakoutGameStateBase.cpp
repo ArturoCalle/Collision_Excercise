@@ -3,7 +3,6 @@
 
 #include "Breakout/BreakoutGameStateBase.h"
 #include "BreakoutPlayerController.h"
-#include "Player/BreakoutPlayerCharacter.h"
 
 void ABreakoutGameStateBase::ModifyBallAmount(int32 Amount)
 {
@@ -13,7 +12,33 @@ void ABreakoutGameStateBase::ModifyBallAmount(int32 Amount)
 		ABreakoutPlayerController* PlayerController = Cast<ABreakoutPlayerController>(GetWorld()->GetFirstPlayerController());
 		if (PlayerController)
 		{
-			PlayerController->PlayerCharacter->SpawnBall();
+			DecreasePlayerLives();
+			PlayerController->RespawnBall();
 		}
+	}
+}
+void ABreakoutGameStateBase::ModifyBrickAmount(int32 Amount)
+{
+	AmountOfBricks += Amount;
+	if (AmountOfBricks <= 0)
+	{
+		ABreakoutPlayerController* PlayerController = Cast<ABreakoutPlayerController>(GetWorld()->GetFirstPlayerController());
+		if (PlayerController)
+		{
+			PlayerController->EndGame();
+		}
+	}
+}
+void ABreakoutGameStateBase::DecreasePlayerLives()
+{
+	PlayerLives--;
+	if (PlayerLives <= 0)
+	{
+		ABreakoutPlayerController* PlayerController = Cast<ABreakoutPlayerController>(GetWorld()->GetFirstPlayerController());
+		if (PlayerController)
+		{
+			PlayerController->EndGame();
+		}
+		
 	}
 }

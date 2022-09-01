@@ -79,7 +79,7 @@ void ABreakoutBall::SplitBall()
 void ABreakoutBall::ResetPowerup()
 {
 	Radius = DefaultRadius;
-	MinVelocity += DefaultMinVelocity;
-	MaxVelocity += DefaultMaxVelocity;
+	MinVelocity = DefaultMinVelocity;
+	MaxVelocity = DefaultMaxVelocity;
 	SetBoundaries();
 }

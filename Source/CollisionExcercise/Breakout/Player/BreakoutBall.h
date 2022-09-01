@@ -25,13 +25,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	float DefaultMinVelocity;
 
-	UPROPERTY(Transient)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Powerup")
 	float MinVelocity;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	float DefaultMaxVelocity;
 
-	UPROPERTY(Transient)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Powerup")
 	float MaxVelocity;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Powerup")

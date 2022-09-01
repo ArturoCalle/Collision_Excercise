@@ -21,5 +21,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Balls")
 	int32 AmountOfBalls;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Balls")
+	int32 PlayerLives;
+
 	void ModifyBallAmount(int32 Amount);
+	void DecreasePlayerLives();
+	void ModifyBrickAmount(int32 Amount);
 };

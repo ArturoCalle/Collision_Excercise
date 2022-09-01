@@ -14,11 +14,11 @@ void ABreakoutBrick::BeginPlay()
 	ABreakoutGameStateBase* GameState = Cast<ABreakoutGameStateBase>(GetWorld()->GetGameState());
 	if (GameState)
 	{
-		GameState->AmountOfBricks++;
+		GameState->ModifyBrickAmount(1);
 	}
 
 	float powerUpRand = FMath::RandRange(0, 10);
-	if (powerUpRand < 3)
+	if (powerUpRand < 1)
 	{
 		bHasPowerup = true;
 	}
@@ -56,7 +56,7 @@ void ABreakoutBrick::HitBrick(AActor* Other)
 		ABreakoutGameStateBase* GameState = Cast<ABreakoutGameStateBase>(GetWorld()->GetGameState());
 		if (GameState)
 		{
-			GameState->AmountOfBricks--;
+			GameState->ModifyBrickAmount(-1);
 		}
 		Destroy();
 	}
