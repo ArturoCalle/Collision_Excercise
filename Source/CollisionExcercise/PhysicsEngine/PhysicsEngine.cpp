@@ -17,6 +17,8 @@ APhysicsEngine::APhysicsEngine()
 	PrimaryActorTick.bCanEverTick = true;
 
 	ShouldDebug = false;
+	bShowContactPoints = false;
+	DebugSphereDuration = 3.0;
 
 }
 
@@ -24,7 +26,8 @@ APhysicsEngine::APhysicsEngine()
 void APhysicsEngine::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	 
+
 	
 }
 
@@ -49,10 +52,15 @@ void APhysicsEngine::CheckCollisions(float DeltaTime)
 
 	for (int i = 0; i < SceneObjects.Num(); i++)
 	{
+		bool bAreColliding = false;
+		AActor* Object1 = SceneObjects[i];
+		ABasicShape* Shape = Cast<ABasicShape>(Object1);
+
 		for (int j = i+1; j < SceneObjects.Num(); j++)
 		{
-			AActor* Object1 = SceneObjects[i];
 			AActor* Object2 = SceneObjects[j];
+			ABasicShape* Shape2 = Cast<ABasicShape>(Object2);
+
 			if (Object1 != Object2)
 			{	
 				ALineShape* Line;
@@ -67,7 +75,7 @@ void APhysicsEngine::CheckCollisions(float DeltaTime)
 					Sphere = Cast<ASphereShape>(Object2);
 					if (Sphere)
 					{
-						EvaluateCollisions(Sphere, Line, DeltaTime);
+						EvaluateCollisions(Sphere, Line, DeltaTime, &bAreColliding);
 					}
 				}
 				else if (Square)
@@ -75,7 +83,7 @@ void APhysicsEngine::CheckCollisions(float DeltaTime)
 					Sphere = Cast<ASphereShape>(Object2);
 					if(Sphere)
 					{
-						EvaluateCollisions(Sphere, Square, DeltaTime);
+						EvaluateCollisions(Sphere, Square, DeltaTime, &bAreColliding);
 					}
 					Square->MoveSquare(1.0);	
 					
@@ -86,27 +94,34 @@ void APhysicsEngine::CheckCollisions(float DeltaTime)
 					Line = Cast<ALineShape>(Object2);
 					if (Square)
 					{
-						EvaluateCollisions(Sphere, Square, DeltaTime);
+						EvaluateCollisions(Sphere, Square, DeltaTime, &bAreColliding);
 						Square->MoveSquare(1.0);
 					}
 					else if (Line)
 					{
-						EvaluateCollisions(Sphere, Line, DeltaTime);			
+						EvaluateCollisions(Sphere, Line, DeltaTime, &bAreColliding);
 					}
 					else if(ASphereShape * Sphere2 = Cast<ASphereShape>(Object2))
 					{
-						EvaluateCollisions(Sphere, Sphere2, DeltaTime);
+						EvaluateCollisions(Sphere, Sphere2, DeltaTime, &bAreColliding);
 					}
 					
 				}
 				
 			}
-
+			if (Shape2)
+			{
+				Shape2->SetCollisionMaterial();
+			}
+		}
+		if(Shape)
+		{
+			Shape->SetCollisionMaterial();
 		}
 		
 	}
 }
-void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, ASphereShape* Sphere2, float DeltaTime)
+void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, ASphereShape* Sphere2, float DeltaTime, bool* CollisionCheck)
 {
 	float MovementAmount = 1.0;
 	FVector ContactPoint;
@@ -118,24 +133,49 @@ void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, ASphereShape* Sphe
 	{
 		MovementAmount = UPhysicsLibrary::SweepSphereTest(Sphere2, Sphere, &ContactPoint, DeltaTime);
 	}
-	Sphere->MoveSphere(MovementAmount);
-	Sphere2->MoveSphere(MovementAmount);
 	if ((MovementAmount < 1.0f))
 	{	
-		UPhysicsLibrary::SolveCollision(Sphere, Sphere2);
+		*CollisionCheck = true;
+		if (Sphere->bPhysiscsEnabled && Sphere2->bPhysiscsEnabled)
+		{
+			UPhysicsLibrary::SolveCollision(Sphere, Sphere2);
+		}
+		else
+		{
+			MovementAmount = 1.0;
+		}
 		Sphere->OnOverlapBegin(Sphere2);
 		Sphere2->OnOverlapBegin(Sphere);
+		if (bShowContactPoints)
+		{
+			DrawDebugSphere(GetWorld(), ContactPoint, 10.0, 20, FColor::Blue, false, DebugSphereDuration, 2.0);
+		}
 	}
+	Sphere->MoveSphere(MovementAmount);
+	Sphere2->MoveSphere(MovementAmount);
+	
 }
-void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, ALineShape* Line, float DeltaTime)
+void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, ALineShape* Line, float DeltaTime, bool* CollisionCheck)
 {
 	FVector ContactPoint;
 	float MovementAmount = UPhysicsLibrary::SweepLineTest(Sphere,Line, &ContactPoint,DeltaTime);
 	if (MovementAmount < 1.0)
 	{
-		UPhysicsLibrary::SolveCollision(Sphere, Line);
+		*CollisionCheck = true;
+		if (Sphere->bPhysiscsEnabled && Line->bPhysiscsEnabled)
+		{
+			UPhysicsLibrary::SolveCollision(Sphere, Line);
+		}
+		else
+		{
+			MovementAmount = 1.0;
+		}
 		Sphere->MoveSphere(MovementAmount);
 		Sphere->OnOverlapBegin(Line);
+		if (bShowContactPoints)
+		{
+			DrawDebugSphere(GetWorld(), ContactPoint, 10.0, 20, FColor::Red, false, DebugSphereDuration, 2.0);
+		}
 	}
 	else
 	{
@@ -143,7 +183,7 @@ void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, ALineShape* Line, 
 	}
 	
 }
-void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, class ASquareShape* Square, float DeltaTime)
+void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, class ASquareShape* Square, float DeltaTime, bool* CollisionCheck)
 {
 
 	FVector ContactPoint;
@@ -160,15 +200,39 @@ void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, class ASquareShape
 		FVector EdgeCollision = Square->CollidingWithEdge(Sphere->GetActorLocation(), Sphere->Radius);
 		if (EdgeCollision != Sphere->GetActorLocation())
 		{
-			UPhysicsLibrary::SolveCollisionSquareEdge(Sphere, Square, ContactPoint);
+			*CollisionCheck = true;
+			if (Sphere->bPhysiscsEnabled && Square->bPhysiscsEnabled)
+			{
+				UPhysicsLibrary::SolveCollisionSquareEdge(Sphere, Square, ContactPoint);
+			}
+			else
+			{
+				MovementAmount = 1.0;
+			}
 			Sphere->OnOverlapBegin(Square);
 			Square->OnOverlapBegin(Sphere);
+			if (bShowContactPoints)
+			{
+				DrawDebugSphere(GetWorld(), ContactPoint, 10.0, 20, FColor::White, false, DebugSphereDuration, 2.0);
+			}
 		}
 		else
 		{
-			UPhysicsLibrary::SolveCollision(Sphere, Square, ContactPoint );
+			*CollisionCheck = true;
+			if (Sphere->bPhysiscsEnabled && Square->bPhysiscsEnabled)
+			{
+				UPhysicsLibrary::SolveCollision(Sphere, Square, ContactPoint );
+			}
+			else
+			{
+				MovementAmount = 1.0;
+			}
 			Sphere->OnOverlapBegin(Square);
 			Square->OnOverlapBegin(Sphere);
+			if (bShowContactPoints)
+			{
+				DrawDebugSphere(GetWorld(), ContactPoint, 10.0, 20, FColor::White, false, DebugSphereDuration, 2.0);
+			}
 		}
 
 	}

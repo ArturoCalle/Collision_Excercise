@@ -15,6 +15,12 @@ public:
 	// Sets default values for this actor's properties
 	APhysicsEngine();
 
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Debugging")
+	bool bShowContactPoints;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Debugging")
+	float DebugSphereDuration;
+
 	UPROPERTY(Transient)
 	float LoadCounter = 4;
 
@@ -30,9 +36,9 @@ public:
 
 	void CheckCollisions(float DeltaTime);
 
-	void EvaluateCollisions(class ASphereShape* Sphere,  ASphereShape* Sphere2, float DeltaTime);
-	void EvaluateCollisions(ASphereShape* Sphere, class ALineShape* Line, float DeltaTime);
-	void EvaluateCollisions(ASphereShape* Sphere, class ASquareShape* Square, float DeltaTime);
+	void EvaluateCollisions(class ASphereShape* Sphere,  ASphereShape* Sphere2, float DeltaTime, bool* CollisionCheck);
+	void EvaluateCollisions(ASphereShape* Sphere, class ALineShape* Line, float DeltaTime, bool* CollisionCheck);
+	void EvaluateCollisions(ASphereShape* Sphere, class ASquareShape* Square, float DeltaTime, bool* CollisionCheck);
 
 	void PrintDebug(ASphereShape* Sphere, ASquareShape* Square);
 };

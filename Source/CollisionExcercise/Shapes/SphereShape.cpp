@@ -28,10 +28,11 @@ void ASphereShape::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
+//5. Function to update position and acceletation
 void ASphereShape::MoveSphere(float AmountOfMovement)
 {
 	float DeltaTime = FApp::GetDeltaTime();
+	Velocity += Acceleration * DeltaTime;
 	SetActorLocation(GetActorLocation() + (Velocity * DeltaTime * AmountOfMovement));
 }
 void ASphereShape::OnOverlapBegin(AActor* Other)

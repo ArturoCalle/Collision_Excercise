@@ -15,6 +15,12 @@ ABasicShape::ABasicShape()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
 
+	NoCollisionMaterial = CreateDefaultSubobject<UMaterial>(TEXT("No Collision Material"));
+	CollisionMaterial = CreateDefaultSubobject<UMaterial>(TEXT("Collision Material"));
+
+	bPhysiscsEnabled = true;
+
+
 }
 
 // Called when the game starts or when spawned
@@ -22,17 +28,42 @@ void ABasicShape::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (NoCollisionMaterial && bUseCollisionMaterials)
+	{
+		Mesh->SetMaterial(0, NoCollisionMaterial);
+	}
+	
 }
 
 // Called every frame
 void ABasicShape::Tick(float DeltaTime)
 {
+	OverlapingActor = nullptr;
 	Super::Tick(DeltaTime);
 
 }
 
 void ABasicShape::OnOverlapBegin(AActor* Other)
 {
+	OverlapingActor = Other;
+}
 
+void ABasicShape::SetCollisionMaterial()
+{
+	if (OverlapingActor)
+	{
+		if (CollisionMaterial && bUseCollisionMaterials)
+		{
+			Mesh->SetMaterial(0, CollisionMaterial);
+		}
+	}
+	else
+	{
+		if (NoCollisionMaterial && bUseCollisionMaterials)
+		{
+			Mesh->SetMaterial(0, NoCollisionMaterial);
+		}
+	}
+	
 }
 
