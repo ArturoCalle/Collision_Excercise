@@ -20,6 +20,7 @@ void ABreakoutBall::BeginPlay()
 void ABreakoutBall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 	float VelocitySize = Velocity.Size();
 	if (VelocitySize < MinVelocity)
 	{
@@ -31,6 +32,19 @@ void ABreakoutBall::Tick(float DeltaTime)
 		float multiplier = MaxVelocity / VelocitySize;
 		Velocity = Velocity * multiplier;
 	}
+
+	/*
+	if ((Velocity.X > -15.0) && (Velocity.X < 15.0))
+	{
+		Velocity.Y = -15.0;
+	}
+
+	if ((Velocity.Y > -15.0) && (Velocity.Y < 15.0))
+	{
+		Velocity.Y = -15.0;
+	}
+	*/
+	
 }
 
 void ABreakoutBall::OnOverlapBegin(AActor* Other)

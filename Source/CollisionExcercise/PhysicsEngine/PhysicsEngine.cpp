@@ -195,7 +195,6 @@ void APhysicsEngine::EvaluateCollisions(ASphereShape* Sphere, class ASquareShape
 	}
 	if (MovementAmount < 1.0)
 	{
-		
 		Sphere->bIsColliding = true;
 		FVector EdgeCollision = Square->CollidingWithEdge(Sphere->GetActorLocation(), Sphere->Radius);
 		if (EdgeCollision != Sphere->GetActorLocation())
